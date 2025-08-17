@@ -8,5 +8,5 @@ Mudanças feitas ate o momento:</br>
 Criei alguns arquivos seguindo padrões comuns usados no java(Nem todos os arquivos estão sendo utilizados).</br>
 Até o momento testei a criação, o login do usuário e a criação de receitas.</br>
 Muitos recursos ainda não estão funcionando, sintam-se livre para corrigir, implementar ou alterar tudo que quiserem.</br>
-
+[!NOTE]
 Obs:Esse commit é apenas um esboço inicial do projeto.
