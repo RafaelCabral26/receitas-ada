@@ -6,11 +6,12 @@ import com.ada.model.VotoId;
 import com.ada.model.Usuario;
 import com.ada.model.Receita;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
 
 @ApplicationScoped
-public class VotoRepository implements PanacheRepository<Voto, VotoId> {
+public class VotoRepository implements PanacheRepositoryBase<Voto, VotoId> {
 
     /**
      * Busca um voto específico de um usuário para uma receita.
