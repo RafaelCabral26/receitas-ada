@@ -1,0 +1,161 @@
+{
+	"info": {
+		"_postman_id": "1b668ef3-7372-4a39-9294-10ad6013d741",
+		"name": "receitas-add",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24386030"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"usuario_de_teste\",\r\n  \"password\": \"senha_forte\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"usuario_de_teste\", \"password\": \"senha_forte\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/usuarios",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"usuarios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ListarReceitas",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJyZWNlaXRhcy1hcHAtYXBpIiwidXBuIjoidXN1YXJpb19kZV90ZXN0ZSIsImdyb3VwcyI6WyJ1c2VyIl0sImlhdCI6MTc1NTgyMTcxNSwiZXhwIjoxNzU1ODIyMDE1LCJqdGkiOiJhZGY4ZTVmYy0zNzQxLTRlOTQtYjJjZi01YTExNThjODk3YmUifQ.ePlXXGlBy7a4TjrPfc2eZRSvoFZUR22fJExQP4EnQt2FFOAQ4_pjY5z9gTBAMZlvclMW1_Nt5JpfBQ6ZITdE25eGXsep0QTLOrfXFV3LWQ2ak92bpyp_eKxqfXFIHeWbTtGCzWy_S4-RIDpO8NZd3hRKNjGeEH2fTcagUXii1jyZKq6J1Sa6nm48dGwWaCFvLRIh2mS4Hsoc50HS4hprVPMIE6m7KE7pjGV26SKba5YhnlR3Uh3ecGCuXACm4_iCXNNb2dt5x9ph-0cGt2QKUHVrKe5Eg1Nk0MeRtDpJHdq0NpDAsrUNXzrAJDLMlNDYQwOkZGy05ZIDE-YzzXyPXQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"titulo\": \"Bolo de Chocolate\",\r\n    \"descricao\": \"Uma receita clássica para os amantes de chocolate.\",\r\n    \"ingredientes\": \"farinha de trigo, chocolate em pó, ovos, açúcar, leite, óleo, fermento\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/receitas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"receitas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CriarReceitas",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJyZWNlaXRhcy1hcHAtYXBpIiwidXBuIjoidXN1YXJpb19kZV90ZXN0ZSIsImdyb3VwcyI6WyJ1c2VyIl0sImlhdCI6MTc1NTQ1NTk0NywiZXhwIjoxNzU1NDU2MjQ3LCJqdGkiOiJiY2E0MjRjZS01Y2FlLTQ1ODYtOTgzYi1mMjQzOWIyNDBkYmYifQ.osI9xSbDmVSM2Prtf0lwfiInBQT9MG5ry57S3Z4fqLzxemyPihzHhWi4oljsdQcdIUNJtcpZRLuZIirQsaKclBko0cDzxBw719e-8KqmJp4ojkK4ZFUZBqhr-9zIpHMKS_2PEHlvqR83FsQnvq-n_-vgPvC-N3uxuWHBwwxHWh-c-56nVNIfup0fNQLofREKZwGKpcbaNRqZlIVaWGnw52KqJ6R_iogIFPqBIqDiOKJS1xjppf8_Os9pp_j0sXdHW7BZkFcEjlAaFalIvixuYB8MXG6foJtzyxsZRHplQL3QXwpvr5uwPGXrZaec9tHiK5Hh4_8RXQLLxIEPmosStg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"titulo\": \"Bolo de Chocolate\",\r\n    \"descricao\": \"Uma receita clássica para os amantes de chocolate.\",\r\n    \"ingredientes\": \"farinha de trigo, chocolate em pó, ovos, açúcar, leite, óleo, fermento\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/receitas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"receitas"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
