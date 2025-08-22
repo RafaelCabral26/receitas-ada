@@ -9,11 +9,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class UsuarioRepository implements PanacheRepository<Usuario> {
 
-    /**
-     * Busca um usuário pelo nome de usuário.
-     * @param username O nome de usuário a ser buscado.
-     * @return Um Optional contendo o usuário, se encontrado.
-     */
+
     public Optional<Usuario> findByUsername(String username) {
         return find("username", username).firstResultOptional();
     }

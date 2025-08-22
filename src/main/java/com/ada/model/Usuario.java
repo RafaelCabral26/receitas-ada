@@ -33,12 +33,7 @@ public class Usuario extends PanacheEntity {
     @OneToMany(mappedBy = "usuario")
     public List<Voto> votos;
 
-    /**
-     * Adiciona um novo usuário ao banco de dados com a senha criptografada.
-     * @param username O nome de usuário.
-     * @param password A senha não criptografada.
-     * @param role O papel do usuário.
-     */
+
     public static void add(String username, String password, String role) {
         Usuario user = new Usuario();
         user.username = username;

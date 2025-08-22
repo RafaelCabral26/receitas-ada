@@ -31,11 +31,7 @@ public class UsuarioResource {
     @Inject
     SecurityIdentity securityIdentity;
 
-    /**
-     * Endpoint para o registro de um novo usuário.
-     * @param usuario O objeto Usuario a ser criado.
-     * @return Resposta HTTP de sucesso ou erro.
-     */
+
     @POST
     @Transactional
     @PermitAll
