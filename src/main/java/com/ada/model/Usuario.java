@@ -12,8 +12,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name = "receitas_user")
 @UserDefinition
 public class Usuario extends PanacheEntity {
 
@@ -27,11 +28,13 @@ public class Usuario extends PanacheEntity {
     public String role;
 
     @OneToMany(mappedBy = "autor")
-    public List<Receita> receitas;
+  @JsonManagedReference("usuario-receitas")
+      public List<Receita> receitas;
 
     // Relação many-to-many com Voto via entidade de junção
     @OneToMany(mappedBy = "usuario")
-    public List<Voto> votos;
+  @JsonManagedReference("usuario-votos")
+      public List<Voto> votos;
 
 
     public static void add(String username, String password, String role) {

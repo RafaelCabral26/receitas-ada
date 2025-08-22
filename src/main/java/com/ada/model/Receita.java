@@ -1,6 +1,7 @@
-// src/main/java/com/ada/model/Receita.java
 package com.ada.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference; 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
@@ -18,10 +19,11 @@ public class Receita extends PanacheEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id", nullable = false)
+    @JsonBackReference("usuario-receitas") // Adicionado
     public Usuario autor;
 
-    // Relação many-to-many com Voto via entidade de junção
     @OneToMany(mappedBy = "receita")
+    @JsonManagedReference("receita-votos") // Adicionado
     public List<Voto> votos;
 
     @PrePersist

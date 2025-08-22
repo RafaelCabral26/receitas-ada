@@ -27,23 +27,13 @@ public class ReceitaResource {
     @Inject
     SecurityIdentity securityIdentity;
 
-    /**
-     * Endpoint para listar todas as receitas.
-     *
-     * @return Uma lista de todas as receitas.
-     */
+ 
     @GET
     @PermitAll
     public List<Receita> listarReceitas() {
         return receitaRepository.listAll();
     }
 
-    /**
-     * Endpoint para obter uma receita por ID.
-     *
-     * @param id O ID da receita.
-     * @return A receita encontrada.
-     */
     @GET
     @Path("/{id}")
     @RolesAllowed("user")
@@ -55,12 +45,7 @@ public class ReceitaResource {
         return Response.ok(receita).build();
     }
 
-    /**
-     * Endpoint para criar uma nova receita.
-     *
-     * @param receita A receita a ser criada.
-     * @return A receita criada.
-     */
+
     @POST
     @Transactional
     @Authenticated
