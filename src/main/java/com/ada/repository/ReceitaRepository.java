@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class ReceitaRepository implements PanacheRepository<Receita> {
-    // Métodos personalizados podem ser adicionados aqui.
+
     public Receita findByTitulo(String titulo) {
         return find("titulo", titulo).firstResult();
     }
