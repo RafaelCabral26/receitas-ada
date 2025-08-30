@@ -17,6 +17,11 @@ public class Receita extends PanacheEntity {
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
+    public ReceitaCategoria categoria; // Cria uma chave que liga uma receita a uma categoria existente.
+
+
     @OneToMany(mappedBy = "receita", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("ingrediente-receitas")
     public List<Ingrediente> ingredientes ;
@@ -29,6 +34,7 @@ public class Receita extends PanacheEntity {
 
     // Relação many-to-many com Voto via entidade de junção
     @OneToMany(mappedBy = "receita")
+    @JsonManagedReference("receita-votos") // Adicionado
     public List<Voto> votos;
 
     @PrePersist

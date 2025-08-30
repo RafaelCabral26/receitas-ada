@@ -2,7 +2,9 @@
 package com.ada.resource;
 
 import com.ada.model.Receita;
+import com.ada.model.ReceitaCategoria;
 import com.ada.model.Usuario;
+import com.ada.repository.CategoriaRepository;
 import com.ada.repository.ReceitaRepository;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
@@ -27,7 +29,11 @@ public class ReceitaResource {
     @Inject
     SecurityIdentity securityIdentity;
 
- 
+    @Inject
+    CategoriaRepository categoriaRepository;
+
+
+
     @GET
     @PermitAll
     public List<Receita> listarReceitas() {
@@ -59,6 +65,12 @@ public class ReceitaResource {
         if (autor == null) {
         return Response.ok(Response.Status.UNAUTHORIZED).build();
         }
+
+        ReceitaCategoria categoria = categoriaRepository.findById(receita.categoria.id);
+        if (categoria == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Categoria inválida").build();
+        }
+
 // 3. Criar a nova receita e atribuir o autor
         Receita novaReceita = new Receita();
         novaReceita.titulo = receita.titulo;
@@ -77,6 +89,8 @@ public class ReceitaResource {
      * @param receita A receita com as informações atualizadas.
      * @return A receita atualizada.
      */
+
+
     @PUT
     @Path("/{id}")
     @Transactional
@@ -125,4 +139,22 @@ public class ReceitaResource {
         receitaRepository.deleteById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
+
+    @GET
+    @Path("/por-categoria/{id}")
+    @PermitAll
+    public List<Receita> listarPorCategoria(@PathParam("id") Long categoriaId) {
+        ReceitaCategoria categoria = categoriaRepository.findById(categoriaId);
+        if (categoria == null) {
+            throw new WebApplicationException("Categoria não encontrada", Response.Status.NOT_FOUND);
+        }
+        return receitaRepository.find("categoria", categoria).list();
+    }
+
+
+    /**
+     * Permite que as receitas sejam filtradas por categoria.
+     * - Retorna uma lista de receitas que pertencem à categoria informada.
+     * - Se a categoria não existir, retorna o erro 404.
+     * - Se existir, retorna todas as receitas associadas a ela. */
 }
