@@ -22,11 +22,11 @@ public class ReceitaService {
         receitaRepository.deleteById(id);
     }
 
-    public Receita criar(Receita receita) {
-        // associa cada ingrediente à receita
-        receita.ingredientes.forEach(i -> i.receita = receita);
-        receita.persist();
-        return receita;
-    }
+    // public Receita criar(Receita receita) {
+    //     // associa cada ingrediente à receita
+    //     receita.ingredientes.forEach(i -> i.receita = receita);
+    //     receita.persist();
+    //     return receita;
+    // }
 
 }

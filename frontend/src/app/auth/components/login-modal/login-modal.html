@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <h4 class="modal-title">Login</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <!-- Error Message Alert -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+    <fieldset [disabled]="isLoading">
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" [(ngModel)]="credentials.email" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="credentials.password" required>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-light" (click)="activeModal.dismiss('Cross click')" [disabled]="isLoading">Fechar</button>
+  <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid || isLoading" (click)="loginForm.ngSubmit.emit()">
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span role="status">{{ isLoading ? 'Entrando...' : 'Login' }}</span>
+  </button>
+</div>

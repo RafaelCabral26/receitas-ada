@@ -8,10 +8,12 @@ import com.ada.model.VotoId;
 import com.ada.repository.ReceitaRepository;
 import com.ada.repository.UsuarioRepository;
 import com.ada.repository.VotoRepository;
+
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -52,7 +54,8 @@ public class VotoResource {
             @PathParam("idReceita") Long idReceita,
             @PathParam("valor") int valor) {
 
-        Usuario usuario = usuarioRepository.findById(Long.valueOf(securityIdentity.getAttribute("id").toString()));
+        String userEmail = securityIdentity.getPrincipal().getName();
+        Usuario usuario = Usuario.find("email", userEmail).firstResult();
         Receita receita = receitaRepository.findById(idReceita);
 
         if (usuario == null || receita == null) {
@@ -80,5 +83,29 @@ public class VotoResource {
 
         votoRepository.persist(voto);
         return Response.status(Response.Status.CREATED).build();
+    }
+
+    @DELETE
+    @Path("/{idReceita}")
+    @Transactional
+    @RolesAllowed("user")
+    public Response removerVoto(@PathParam("idReceita") Long idReceita) {
+        String userEmail = securityIdentity.getPrincipal().getName();
+        Usuario usuario = Usuario.find("email", userEmail).firstResult();
+        Receita receita = receitaRepository.findById(idReceita);
+
+        if (usuario == null || receita == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        // Find the vote to remove
+        Voto voto = votoRepository.findByUsuarioAndReceita(usuario, receita).orElse(null);
+
+        if (voto == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Voto não encontrado para remoção.").build();
+        }
+
+        votoRepository.delete(voto);
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 }

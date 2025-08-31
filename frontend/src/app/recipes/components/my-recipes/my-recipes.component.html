@@ -1,0 +1,112 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Minhas Receitas</h2>
+    <button class="btn btn-primary" (click)="openCreateModal()">Criar Nova Receita</button>
+  </div>
+
+  <!-- Lista de Receitas -->
+  <div *ngIf="myRecipes$ | async as recipes; else loading">
+    <div *ngIf="recipes.length > 0; else noRecipes" class="row">
+      <div *ngFor="let recipe of recipes" class="col-md-4 mb-4">
+        <div class="card h-100">
+          <img [src]="recipe.pathImg || 'https://via.placeholder.com/300x200.png?text=Sem+Imagem'" class="card-img-top" [alt]="recipe.titulo">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ recipe.titulo }}</h5>
+            <p class="card-text">{{ recipe.descricao }}</p>
+            <div class="mt-auto d-flex justify-content-end align-items-center">
+              <!-- Botões de Ação -->
+              <button class="btn btn-sm btn-outline-secondary me-2" (click)="openEditModal(recipe)">Editar</button>
+              <button class="btn btn-sm btn-outline-danger" (click)="onDelete(recipe.id)">Excluir</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template de Carregamento -->
+  <ng-template #loading>
+    <p>Carregando receitas...</p>
+  </ng-template>
+
+  <!-- Template para Nenhuma Receita -->
+  <ng-template #noRecipes>
+    <div class="text-center">
+      <p>Você ainda não criou nenhuma receita.</p>
+      <button class="btn btn-primary mt-2" (click)="openCreateModal()">Crie sua primeira receita</button>
+    </div>
+  </ng-template>
+
+</div>
+
+<!-- Modal de Criação de Receita -->
+<div class="modal fade" #createRecipeModal tabindex="-1" aria-labelledby="createRecipeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createRecipeModalLabel">Criar Nova Receita</h5>
+        <button type="button" class="btn-close" (click)="closeCreateModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" id="titulo" class="form-control" formControlName="titulo" required>
+          </div>
+          <div class="mb-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea id="descricao" class="form-control" formControlName="descricao" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="ingredientes" class="form-label">Ingredientes</label>
+            <textarea id="ingredientes" class="form-control" formControlName="ingredientes" rows="5" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="pathImg" class="form-label">URL da Imagem</label>
+            <input type="url" id="pathImg" class="form-control" formControlName="pathImg">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeCreateModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="recipeForm.invalid">Salvar Receita</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edição de Receita -->
+<div class="modal fade" #editRecipeModal tabindex="-1" aria-labelledby="editRecipeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editRecipeModalLabel">Editar Receita</h5>
+        <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="editForm" (ngSubmit)="onEditSubmit()">
+          <div class="mb-3">
+            <label for="edit-titulo" class="form-label">Título</label>
+            <input type="text" id="edit-titulo" class="form-control" formControlName="titulo" required>
+          </div>
+          <div class="mb-3">
+            <label for="edit-descricao" class="form-label">Descrição</label>
+            <textarea id="edit-descricao" class="form-control" formControlName="descricao" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="edit-ingredientes" class="form-label">Ingredientes</label>
+            <textarea id="edit-ingredientes" class="form-control" formControlName="ingredientes" rows="5" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="edit-pathImg" class="form-label">URL da Imagem</label>
+            <input type="url" id="edit-pathImg" class="form-control" formControlName="pathImg">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeEditModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Salvar Alterações</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,10 +1,11 @@
 // src/main/java/com/ada/resource/ReceitaResource.java
 package com.ada.resource;
 
+import com.ada.dto.ReceitaDTO;
 import com.ada.model.Receita;
 import com.ada.model.Usuario;
 import com.ada.repository.ReceitaRepository;
-import com.ada.service.ReceitaService;
+import com.ada.repository.VotoRepository; // ADDED
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -15,6 +16,8 @@ import jakarta.ws.rs.core.Response;
 import jakarta.transaction.Transactional;
 import io.quarkus.security.identity.SecurityIdentity;
 
+import com.ada.dto.ReceitaDTO;
+import java.util.stream.Collectors;
 import java.util.List;
 
 @Path("/receitas")
@@ -24,28 +27,25 @@ public class ReceitaResource {
 
     @Inject
     ReceitaRepository receitaRepository;
+
     @Inject
-    ReceitaService receitaService;
+    VotoRepository votoRepository; // ADDED
+
     @Inject
     SecurityIdentity securityIdentity;
 
-    /**
-     * Endpoint para listar todas as receitas.
-     *
-     * @return Uma lista de todas as receitas.
-     */
+ 
     @GET
     @PermitAll
-    public List<Receita> listarReceitas() {
-        return receitaRepository.listAll();
+    public java.util.List<ReceitaDTO> listarReceitas() {
+        // Get the current security identity (can be anonymous)
+        SecurityIdentity currentIdentity = securityIdentity;
+
+        return receitaRepository.<Receita>listAll().stream()
+                .map(receita -> toReceitaDTO(receita, currentIdentity, votoRepository))
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Endpoint para obter uma receita por ID.
-     *
-     * @param id O ID da receita.
-     * @return A receita encontrada.
-     */
     @GET
     @Path("/{id}")
     @RolesAllowed("user")
@@ -57,28 +57,39 @@ public class ReceitaResource {
         return Response.ok(receita).build();
     }
 
-    /**
-     * Endpoint para criar uma nova receita.
-     *
-     * @param receita A receita a ser criada.
-     * @return A receita criada.
-     */
+    @GET
+    @Path("/my-recipes")
+    @Authenticated
+    public Response getMyReceitas() {
+        String userEmail = securityIdentity.getPrincipal().getName();
+        List<Receita> myRecipes = receitaRepository.list("autor.email", userEmail);
+        return Response.ok(myRecipes).build();
+    }
+
+
     @POST
     @Transactional
     @Authenticated
 
     public Response criarReceita(Receita receita) {
-        String username = securityIdentity.getPrincipal().getName();
+        String email = securityIdentity.getPrincipal().getName();
 
-// 2. Buscar o usuário no banco de dados usando o nome de usuário
-        Usuario autor = Usuario.find("username", username).firstResult();
+        // Buscar o usuário no banco de dados usando o email
+        Usuario autor = Usuario.find("email", email).firstResult();
 
         if (autor == null) {
-        return Response.ok(Response.Status.UNAUTHORIZED).build();
+            // This should ideally not happen if the JWT is valid and the user exists.
+            return Response.status(Response.Status.UNAUTHORIZED).entity("Usuário não encontrado.").build();
         }
-        Receita receitacriada = receitaService.criar(receita);
-
-        return Response.ok(Response.Status.CREATED).build();
+// 3. Criar a nova receita e atribuir o autor
+        Receita novaReceita = new Receita();
+        novaReceita.titulo = receita.titulo;
+        novaReceita.autor = autor;
+        novaReceita.ingredientes = receita.ingredientes;
+        novaReceita.descricao = receita.descricao;
+        novaReceita.pathImg = receita.pathImg;
+        novaReceita.persist();
+        return Response.status(Response.Status.CREATED).entity(novaReceita).build();
     }
 
     /**
@@ -99,8 +110,12 @@ public class ReceitaResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        // Verifica se o usuário autenticado é o autor da receita
-        if (!existente.autor.id.equals(Long.valueOf(securityIdentity.getAttribute("id").toString()))) {
+        // Get the email of the logged-in user from the token
+        String userEmail = securityIdentity.getPrincipal().getName();
+        Usuario currentUser = Usuario.find("email", userEmail).firstResult();
+
+        // Verify ownership by comparing the user entities
+        if (currentUser == null || !existente.autor.equals(currentUser)) {
             return Response.status(Response.Status.FORBIDDEN).entity("Você não tem permissão para editar esta receita.").build();
         }
 
@@ -108,6 +123,7 @@ public class ReceitaResource {
         existente.titulo = receita.titulo;
         existente.descricao = receita.descricao;
         existente.ingredientes = receita.ingredientes;
+        existente.pathImg = receita.pathImg;
         receitaRepository.persist(existente);
         return Response.ok(existente).build();
     }
@@ -129,12 +145,59 @@ public class ReceitaResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        // Verifica se o usuário autenticado é o autor da receita
-        if (!receita.autor.id.equals(Long.valueOf(securityIdentity.getAttribute("id").toString()))) {
+        // Get the email of the logged-in user from the token
+        String userEmail = securityIdentity.getPrincipal().getName();
+        Usuario currentUser = Usuario.find("email", userEmail).firstResult();
+
+        // Verify ownership by comparing the user entities
+        if (currentUser == null || !receita.autor.equals(currentUser)) {
             return Response.status(Response.Status.FORBIDDEN).entity("Você não tem permissão para excluir esta receita.").build();
         }
 
         receitaRepository.deleteById(id);
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    private ReceitaDTO toReceitaDTO(Receita receita, SecurityIdentity securityIdentity, VotoRepository votoRepository) {
+        ReceitaDTO dto = new ReceitaDTO();
+        dto.setId(receita.id);
+        dto.setTitulo(receita.titulo);
+        dto.setDescricao(receita.descricao);
+        dto.setIngredientes(receita.ingredientes);
+        dto.setPathImg(receita.pathImg);
+        dto.setCreatedAt(receita.createdAt);
+        if (receita.autor != null) {
+            dto.setAutorNome(receita.autor.username);
+        }
+
+        // Populate isAuthor and hasVoted
+        if (securityIdentity == null || securityIdentity.isAnonymous()) { // Check if securityIdentity is null or anonymous
+            dto.setAuthor(false);
+            dto.setHasVoted(false);
+        }
+        else if (securityIdentity.getPrincipal() != null && securityIdentity.getPrincipal().getName() != null) { // Check for valid principal
+            String userEmail = securityIdentity.getPrincipal().getName();
+            Usuario currentUser = Usuario.find("email", userEmail).firstResult();
+
+            if (currentUser != null) {
+                dto.setAuthor(receita.autor != null && receita.autor.equals(currentUser));
+
+                // Explicitly merge currentUser to ensure it's in the current persistence context
+                // This might help if there are any detached entity issues
+                Usuario managedCurrentUser = Usuario.findById(currentUser.id); // Re-fetch or merge
+
+                dto.setHasVoted(votoRepository.findByUsuarioAndReceita(managedCurrentUser, receita).isPresent());
+            } else {
+                // User is authenticated but not found in DB (should not happen)
+                dto.setAuthor(false);
+                dto.setHasVoted(false);
+            }
+        } else {
+            dto.setAuthor(false);
+            dto.setHasVoted(false);
+        }
+        // Populate totalVotos
+        dto.setTotalVotos((int) votoRepository.count("receita", receita));
+        return dto;
     }
 }
