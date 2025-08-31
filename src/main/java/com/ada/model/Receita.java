@@ -1,6 +1,7 @@
 // src/main/java/com/ada/model/Receita.java
 package com.ada.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
 
@@ -12,9 +13,13 @@ public class Receita extends PanacheEntity {
 
     public String titulo;
     public String descricao;
-    public String ingredientes;
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "receita", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("ingrediente-receitas")
+    public List<Ingrediente> ingredientes ;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "autor_id", nullable = false)

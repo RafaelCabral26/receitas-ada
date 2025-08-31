@@ -21,4 +21,12 @@ public class ReceitaService {
     public void excluirReceita(Long id) {
         receitaRepository.deleteById(id);
     }
+
+    public Receita criar(Receita receita) {
+        // associa cada ingrediente à receita
+        receita.ingredientes.forEach(i -> i.receita = receita);
+        receita.persist();
+        return receita;
+    }
+
 }

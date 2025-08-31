@@ -4,6 +4,7 @@ package com.ada.resource;
 import com.ada.model.Receita;
 import com.ada.model.Usuario;
 import com.ada.repository.ReceitaRepository;
+import com.ada.service.ReceitaService;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
@@ -23,7 +24,8 @@ public class ReceitaResource {
 
     @Inject
     ReceitaRepository receitaRepository;
-
+    @Inject
+    ReceitaService receitaService;
     @Inject
     SecurityIdentity securityIdentity;
 
@@ -74,13 +76,8 @@ public class ReceitaResource {
         if (autor == null) {
         return Response.ok(Response.Status.UNAUTHORIZED).build();
         }
-// 3. Criar a nova receita e atribuir o autor
-        Receita novaReceita = new Receita();
-        novaReceita.titulo = receita.titulo;
-        novaReceita.autor = autor;
-        novaReceita.ingredientes = receita.ingredientes;
-        novaReceita.descricao = receita.descricao;
-        novaReceita.persist();
+        Receita receitacriada = receitaService.criar(receita);
+
         return Response.ok(Response.Status.CREATED).build();
     }
 

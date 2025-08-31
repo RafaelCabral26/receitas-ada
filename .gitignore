@@ -45,3 +45,6 @@ nb-configuration.xml
 .certs/
 /src/main/resources/privateKey.pem
 /src/main/resources/publicKey.pem
+
+# Node modules
+node_modules/
