@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/recipes">Receitas App</a> <!-- Navega para a home -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+
+        <!-- Estado Deslogado -->
+        <ng-container *ngIf="!(authService.isLoggedIn$ | async)">
+          <li class="nav-item me-2">
+            <button class="btn btn-primary" (click)="openLoginModal()">Login</button>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light" (click)="openRegisterModal()">Registrar</button>
+          </li>
+        </ng-container>
+
+        <!-- Estado Logado -->
+        <ng-container *ngIf="authService.isLoggedIn$ | async">
+          <li class="nav-item me-2">
+            <a class="btn btn-outline-light" routerLink="/my-recipes">Minhas Receitas</a> <!-- Usa routerLink -->
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-danger" (click)="logout()">Logout</button>
+          </li>
+        </ng-container>
+
+      </ul>
+    </div>
+  </div>
+</nav>

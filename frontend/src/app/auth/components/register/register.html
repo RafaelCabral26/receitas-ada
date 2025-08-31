@@ -1,0 +1,42 @@
+<div class="modal-header">
+  <h4 class="modal-title">Registrar</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <!-- Error Message Alert -->
+  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+    <fieldset [disabled]="isLoading">
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="seu@email.com" [(ngModel)]="credentials.email" required>
+      </div>
+      <div class="mb-3">
+        <label for="username" class="form-label">Nome de Usuário</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Seu nome de usuário" [(ngModel)]="credentials.username" required>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">Senha</label>
+        <input type="password" class="form-control" id="password" name="password" [(ngModel)]="credentials.password" required #password="ngModel">
+      </div>
+      <div class="mb-3">
+        <label for="confirmPassword" class="form-label">Confirmar Senha</label>
+        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" [(ngModel)]="credentials.confirmPassword" required #confirmPassword="ngModel" [class.is-invalid]="confirmPassword.touched && password.value !== confirmPassword.value">
+        <div *ngIf="confirmPassword.touched && password.value !== confirmPassword.value" class="invalid-feedback">
+          As senhas não coincidem.
+        </div>
+      </div>
+    </fieldset>
+  </form>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-light" (click)="activeModal.dismiss('Cross click')" [disabled]="isLoading">Fechar</button>
+  <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || password.value !== confirmPassword.value || isLoading" (click)="registerForm.ngSubmit.emit()">
+    <span *ngIf="isLoading" class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+    <span role="status">{{ isLoading ? 'Registrando...' : 'Registrar' }}</span>
+  </button>
+</div>

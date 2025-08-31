@@ -5,7 +5,6 @@ import com.ada.model.Voto;
 import com.ada.model.VotoId;
 import com.ada.model.Usuario;
 import com.ada.model.Receita;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Optional;
@@ -20,6 +19,8 @@ public class VotoRepository implements PanacheRepositoryBase<Voto, VotoId> {
      * @return Um Optional contendo o voto, se encontrado.
      */
     public Optional<Voto> findByUsuarioAndReceita(Usuario usuario, Receita receita) {
-        return find("usuario =?1 and receita =?2", usuario, receita).firstResultOptional();
+        // Create a VotoId directly and use findById
+        VotoId votoId = new VotoId(usuario.id, receita.id);
+        return findByIdOptional(votoId);
     }
 }
