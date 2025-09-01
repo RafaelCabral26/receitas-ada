@@ -37,6 +37,7 @@ cd frontend
 Em seguida, inicie o servidor de desenvolvimento do Angular:
 
 ```bash
+npm install
 ng serve
 ```
 
